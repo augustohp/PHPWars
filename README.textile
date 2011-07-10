@@ -1,0 +1,3 @@
+h1. PHPWars
+
+Aims to be a game made for developers. You must create your class to compete against others classes.
