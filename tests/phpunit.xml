@@ -1,0 +1,12 @@
+<phpunit bootstrap="./bootstrap.php">
+
+    <testsuite name="PHPWars Test Suite">
+        <directory>./library/PHPWars</directory>
+    </testsuite>
+    
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../library/Zend</directory>
+        </whitelist>
+    </filter>
+</phpunit>

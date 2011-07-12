@@ -1,0 +1,9 @@
+[submodule "library/Zend"]
+	path = library/Zend
+	url = https://github.com/Enrise/Zend.git
+[submodule "library/Symfony/Component/Console"]
+	path = library/Symfony/Component/Console
+	url = https://github.com/symfony/Console.git
+[submodule "library/Symfony/Component/Yaml"]
+	path = library/Symfony/Component/Yaml
+	url = https://github.com/symfony/Yaml.git
