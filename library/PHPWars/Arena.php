@@ -1,6 +1,7 @@
 <?php
 namespace PHPWars;
 
+use PHPWars\Content\Tile;
 class Arena
 {
 	protected $_size;
@@ -32,16 +33,20 @@ class Arena
 			throw new \RuntimeException('No size defined!');
 		}
 		
-		for ($x=0; $x<=$size; $x++) {
+		for ($x=0; $x<$size; $x++) {
 			$this->_locations[$x] = array();
-			for ($y=0; $y<=$size; $y++) {
-				$this->_locations[$x][$y] = new Location($x, $y);
+			for ($y=0; $y<$size; $y++) {
+				$this->_locations[$x][$y] = new Tile($x, $y);
 			}
 		}
 	}
 	
 	public function getLocation($x, $y)
 	{
+		if (empty($this->_locations)) {
+			$msg = "Maybe you've forgetten to reset the Arena?";
+			throw new \RuntimeException($msg);
+		}
 		if (!isset($this->_locations[$x])) {
 			$msg = "%d is not a valid position for X";
 			throw new \InvalidArgumentException($msg, $x);
