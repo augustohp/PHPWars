@@ -4,6 +4,8 @@
  */
 namespace PHPwars\Content;
 
+use PHPWars\Piece\Placeable;
+
 /**
  * Interface for places (tiles) in the arena.
  * A place is somewhere into the plane (X,Y) that can have a content, in other
@@ -34,24 +36,28 @@ interface Contenteable
 	/**
 	 * Returns if there is any content in here. If it has, the player cannot
 	 * move to thhis place.
+	 * If a parameter is given, then it checks if it exists into the collection.
 	 * 
-	 * @return boolean
+	 * @param	Placeable[optional] $object
+	 * @return	boolean
 	 */
-	public function hasContent();
+	public function hasContent(Placeable $object = null);
 	
 	/**
 	 * Returns the content of the tile.
 	 * 
-	 * @returns Contenteable
+	 * @throws	UnexpectedValueException	Collection not initialized
+	 * @returns PHPWars\Content\Collection
 	 */
 	public function getContent();
 	
 	/**
 	 * Returns if an oject can be moved to this place.
 	 * 
-	 * @return boolean
+	 * @param	Placeable	$object
+	 * @return	boolean
 	 */
-	public function canMoveHere();
+	public function canMoveHere(Placeable $object);
 	
 	/**
 	 * Returns the size of this place.

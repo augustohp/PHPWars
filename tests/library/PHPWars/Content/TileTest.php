@@ -4,7 +4,8 @@ namespace PHPWars\Test;
 
 use PHPWars\PHPUnit\TestCase,
 	PHPWars\Content\Tile,
-	PHPWars\Piece\Wall;
+	PHPWars\Piece\Wall,
+	PHPWars\Content\Collection;
 
 class TileTest extends TestCase 
 {
@@ -76,25 +77,74 @@ class TileTest extends TestCase
 		$this->setExpectedException('UnexpectedValueException');
 		$this->object->getY();
 	}
+	
+	/**
+	 * @depends testGetSize
+	 */
+	public function testCanMoveHere() 
+	{
+		$wall = $this->getMock('PHPWars\Piece\Wall');
+		$wall->expects($this->exactly(5))
+			 ->method('getSize')
+			 ->will($this->returnValue($this->object->getSize()));
+		
+		$this->assertTrue($this->object->canMoveHere($wall));
+		$this->object->addContent($wall);
+		$this->assertFalse($this->object->canMoveHere($wall));
+	}
 
 	/**
 	 * @dataProvider PHPWars\PHPUnit\DataProvider::validPieces
 	 */
-	public function testSetContent($piece) 
+	public function testAddMockContent($piece) 
 	{
-		$this->object->setContent($piece);
-		$this->assertAttributeEquals($piece, '_content', $this->object);
+		$object = $this->getMock('PHPWars\Content\Tile', array('getContent'));
+		$object->expects($this->exactly(2))
+			   ->method('getContent')
+			   ->will($this->returnValue(new Collection($piece->getSize())));
+		
+		$object->addContent($piece);
+	}
+	
+	/**
+	 * @depends testAddMockContent
+	 * @dataProvider PHPWars\PHPUnit\DataProvider::validPieces
+	 */
+	public function testAddContent($piece)
+	{
+		if (!$this->object->canMoveHere($piece)) {
+			$this->markTestSkipped('Piece uses more space then allowed.');
+		}
+		$this->object->addContent($piece);
+		$this->assertAttributeContains($piece, '_content', $this->object);
 	}
 
 	/**
-	 * @depends testSetContent
+	 * @depends testAddContent
 	 * @dataProvider PHPWars\PHPUnit\DataProvider::validPieces
 	 */
 	public function testHasContent($piece) 
 	{
+		if (!$this->object->canMoveHere($piece)) {
+			$this->markTestSkipped('Piece uses more space then allowed.');
+		}
 		$this->assertFalse($this->object->hasContent());
-		$this->object->setContent($piece);
+		$this->object->addContent($piece);
 		$this->assertTrue($this->object->hasContent());
+	}
+	
+	/**
+	 * @depends testAddContent
+	 * @dataProvider PHPWars\PHPUnit\DataProvider::validPieces
+	 */
+	public function testHasSpecificContent($piece)
+	{
+		if (!$this->object->canMoveHere($piece)) {
+			$this->markTestSkipped('Piece uses more space then allowed.');
+		}
+		$this->assertFalse($this->object->hasContent($piece));
+		$this->object->addContent($piece);
+		$this->assertTrue($this->object->hasContent($piece));
 	}
 
 	/**
@@ -103,17 +153,10 @@ class TileTest extends TestCase
 	 */
 	public function testGetContent($piece) 
 	{
-		$this->object->setContent($piece);
-		$this->assertEquals($piece, $this->object->getContent());
-	}
-
-	/**
-	 * @depends testHasContent
-	 */
-	public function testCanMoveHere() 
-	{
-		$this->assertTrue($this->object->canMoveHere());
-		$this->object->setContent(new Wall());
-		$this->assertFalse($this->object->canMoveHere());
+		if (!$this->object->canMoveHere($piece)) {
+			$this->markTestSkipped('Piece uses more space then allowed.');
+		}
+		$this->object->addContent($piece);
+		$this->assertContains($piece, $this->object->getContent());
 	}
 }

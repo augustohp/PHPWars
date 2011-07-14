@@ -29,6 +29,22 @@ class DataProvider
 	}
 	
 	/**
+	 * Return valid sizes that can be used to limit the number of
+	 * elements in a given tile/contenteable.
+	 *
+	 * @return array
+	 */
+	public static function validSizes()
+	{
+		return array(
+			array(1),
+			array(10),
+			array(100),
+			array(0.5)
+		);
+	}
+	
+	/**
 	 * Returns valid pieces to be places into tiles.
 	 *
 	 * @return array
@@ -37,6 +53,18 @@ class DataProvider
 	{
 		return array(
 			array(new \PHPWars\Piece\Wall)
+		);
+	}
+	
+	/**
+	 * Returns valid contents for a arena.
+	 *
+	 * @return array
+	 */
+	public static function validContents()
+	{
+		return array(
+			array(new \PHPWars\Content\Tile)
 		);
 	}
 }

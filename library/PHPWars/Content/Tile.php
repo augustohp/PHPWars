@@ -3,12 +3,15 @@
  * @namespace
  */
 namespace PHPWars\Content;
+
 use PHPWars\Piece\Placeable,
-    PHPwars\Content\Contenteable;
+    PHPWars\Content\Contenteable,
+	PHPWars\Content\Collection;
 
 /**
  * A tile is the most basic unit (place) of a arena.
  * 
+ * @todo	Write validation to setX() and setY() methods
  * @package PHPWars/Content
  * @since	0.0.1
  * @author	Augusto Pascutti <augusto@phpsp.org.br>
@@ -32,9 +35,9 @@ class Tile implements Contenteable
 	/**
 	 * Content of this tile.
 	 *
-	 * @var type 
+	 * @var Collection 
 	 */
-	protected $_content;
+	private $_content;
 	
 	/**
 	 * Constructor.
@@ -50,6 +53,7 @@ class Tile implements Contenteable
 		if (!is_null($y)) {
 			$this->setY($y);
 		}
+		$this->reset();
 	}
 	
 	/**
@@ -101,39 +105,46 @@ class Tile implements Contenteable
 	/**
 	 * Defines the content of this tile.
 	 *
-	 * @param Placeable $mixed
-	 * @return Tile 
+	 * @throws	InvalidArgumentException	Size of collection exceeded
+	 * @param	Placeable $mixed
+	 * @return	Tile 
 	 */
-	public function setContent(Placeable $mixed)
+	public function addContent(Placeable $mixed)
 	{
-		$this->_content = $mixed;
+		if (!$this->canMoveHere($mixed)) {
+			$msg = 'Maximum size of this collection exceeded.';
+			throw new \InvalidArgumentException($msg);
+		}
+		$this->getContent()->append($mixed);
 		return $this;
 	}
 	
 	/**
 	 * @inheritdoc
 	 */
-	public function hasContent()
+	public function hasContent(Placeable $object = null)
 	{
-		return !is_null($this->_content);
+		return ($this->getContent()->count() > 0);
 	}
 	
 	/**
 	 * @inheritdoc
-	 * @todo Implement Content collection
 	 */
 	public function getContent()
 	{
+		if (!$this->_content instanceof Collection) {
+			$msg = 'Collection must be reset before used.';
+			throw new \UnexpectedValueException($msg);
+		}
 		return $this->_content;
 	}
 	
 	/**
-	 * @injeritdoc
-	 * @todo Do thid thing right. See for the size of the pieces here.
+	 * @inheritdoc
 	 */
-	public function canMoveHere()
+	public function canMoveHere(Placeable $object)
 	{
-		return !$this->hasContent();
+		return $this->getContent()->canAppend($object);
 	}
 	
 	/**
@@ -142,5 +153,13 @@ class Tile implements Contenteable
 	public function getSize()
 	{
 		return 1;
+	}
+	
+	/**
+	 * Resets the content of this tile.
+	 */
+	public function reset()
+	{
+		$this->_content = new Collection($this->getSize());
 	}
 }
